@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Assessment: {{ test.title }}{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-portal">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'test_list' %}">Tests</a></li>
+    <li class="breadcrumb-item active">{{ test.title }}</li>
+</ol>
+{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'enter_marks' test.pk %}" class="btn btn-sm btn-primary">Enter / Update Marks</a>
+<a href="{% url 'test_list' %}" class="btn btn-sm btn-outline-secondary">Back to List</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <!-- Summary Metrics -->
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-label">Batch Code</div>
+            <div class="metric-value fs-5">{{ test.batch.batch_code }}</div>
+            <div class="metric-sub">{{ test.batch.course.name }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-label">Test Date</div>
+            <div class="metric-value fs-5">{{ test.test_date|date:"M d, Y" }}</div>
+            <div class="metric-sub">Max Marks: {{ test.total_marks }} | Pass: {{ test.passing_marks }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-label">Submissions Graded</div>
+            <div class="metric-value">{{ submissions_count }}</div>
+            <div class="metric-sub">Out of {{ test.batch.enrolled_count }} enrolled students</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="metric-label">Class Pass Rate</div>
+            <div class="metric-value {% if pass_percentage >= 70 %}text-success{% else %}text-danger{% endif %}">{{ pass_percentage }}%</div>
+            <div class="metric-sub">Average Score: {{ avg_marks }} / {{ test.total_marks }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-portal">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Student Performance Roster</span>
+        <a href="{% url 'enter_marks' test.pk %}" class="btn btn-sm btn-outline-primary py-0">Edit Marks</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-portal align-middle">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Marks Obtained</th>
+                    <th>Max Marks</th>
+                    <th>Percentage</th>
+                    <th>Grade</th>
+                    <th>Result Status</th>
+                    <th>Instructor Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in results %}
+                <tr>
+                    <td><span class="id-badge">{{ res.student.student_id }}</span></td>
+                    <td class="fw-medium">
+                        <a href="{% url 'student_detail' res.student.pk %}" class="text-decoration-none text-dark">{{ res.student.full_name }}</a>
+                    </td>
+                    <td class="fw-bold">{{ res.marks_obtained }}</td>
+                    <td class="text-muted">{{ test.total_marks }}</td>
+                    <td>{{ res.percentage }}%</td>
+                    <td><span class="badge bg-light text-dark border">{{ res.grade|default:"-" }}</span></td>
+                    <td>
+                        {% if res.is_passed %}
+                        <span class="badge bg-success badge-status">Passed</span>
+                        {% else %}
+                        <span class="badge bg-danger badge-status">Failed</span>
+                        {% endif %}
+                    </td>
+                    <td class="small text-muted">{{ res.remarks|default:"-" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center py-4 text-muted">
+                        No marks entered yet. Click "Enter / Update Marks" to score the students.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load coaching_tags %}
+
+{% block title %}Enrollment & Student Fee Accounts{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-custom">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item active">Enrollments & Accounts</li>
+</ol>
+{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'enrollment_create' %}" class="btn btn-sm btn-primary fw-medium px-3">Admit in Batch</a>
+{% endblock %}
+
+{% block content %}
+<div class="panel-card mb-4">
+    <div class="p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <select name="batch" class="form-select form-select-sm">
+                    <option value="">All Cohorts / Batches</option>
+                    {% for b in batches %}
+                    <option value="{{ b.pk }}" {% if batch_filter == b.pk|stringformat:"s" %}selected{% endif %}>{{ b.batch_code }} - {{ b.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">All Enrollment Statuses</option>
+                    <option value="ENROLLED" {% if status_filter == 'ENROLLED' %}selected{% endif %}>Enrolled</option>
+                    <option value="COMPLETED" {% if status_filter == 'COMPLETED' %}selected{% endif %}>Completed</option>
+                    <option value="DROPPED" {% if status_filter == 'DROPPED' %}selected{% endif %}>Dropped</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-dark fw-medium px-3">Filter</button>
+                {% if batch_filter or status_filter %}
+                <a href="{% url 'enrollment_list' %}" class="btn btn-sm btn-outline-secondary">Reset</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="panel-card">
+    <div class="panel-header">
+        <div>
+            <span class="fw-bold">Student Batch Enrollments & Fee Accounts</span>
+            <span class="badge bg-light text-secondary border ms-2">{{ enrollments.count }} Active Records</span>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Student Name</th>
+                    <th>Cohort / Batch</th>
+                    <th>Program</th>
+                    <th>Gross Fee</th>
+                    <th>Scholarship Concession</th>
+                    <th>Net Payable</th>
+                    <th>Total Remitted</th>
+                    <th>Outstanding Due</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for enr in enrollments %}
+                <tr>
+                    <td><span class="id-tag">{{ enr.student.student_id }}</span></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="avatar-chip avatar-primary">{{ enr.student.initials }}</span>
+                            <div>
+                                <a href="{% url 'student_detail' enr.student.pk %}" class="fw-bold text-dark text-decoration-none d-block">
+                                    {{ enr.student.full_name }}
+                                </a>
+                                <span class="text-muted small">{{ enr.student.phone }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="{% url 'batch_detail' enr.batch.pk %}" class="text-decoration-none fw-medium">{{ enr.batch.batch_code }}</a>
+                    </td>
+                    <td class="small text-muted">{{ enr.batch.course.name }}</td>
+                    <td class="inr-amount">{{ enr.agreed_fee|inr }}</td>
+                    <td class="inr-amount text-muted">
+                        {% if enr.discount > 0 %}
+                        - {{ enr.discount|inr }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td class="inr-amount fw-bold">{{ enr.net_fee|inr }}</td>
+                    <td class="inr-amount text-success">{{ enr.total_paid|inr }}</td>
+                    <td class="inr-amount {% if enr.balance_due > 0 %}text-danger fw-bold{% else %}text-muted{% endif %}">
+                        {{ enr.balance_due|inr }}
+                    </td>
+                    <td>
+                        {% if enr.payment_status == 'PAID' %}
+                        <span class="status-pill pill-paid">Cleared</span>
+                        {% elif enr.payment_status == 'PARTIAL' %}
+                        <span class="status-pill pill-partial">Installment</span>
+                        {% else %}
+                        <span class="status-pill pill-pending">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="btn-group btn-group-sm">
+                            {% if enr.balance_due > 0 %}
+                            <a href="{% url 'payment_create' %}?enrollment_id={{ enr.pk }}" class="btn btn-primary py-0 fw-medium">Pay Fee</a>
+                            {% endif %}
+                            <a href="{% url 'enrollment_delete' enr.pk %}" class="btn btn-outline-danger py-0">Remove</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="11" class="text-center py-4 text-muted">No enrollments match the filter.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

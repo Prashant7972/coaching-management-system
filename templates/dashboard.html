@@ -1,0 +1,438 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load coaching_tags %}
+
+{% block title %}Executive Academic & Financial Dashboard{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-custom">
+    <li class="breadcrumb-item active">Operational & Financial Overview</li>
+</ol>
+{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'student_create' %}" class="btn btn-sm btn-primary fw-semibold px-3">New Admission</a>
+<a href="{% url 'payment_create' %}" class="btn btn-sm btn-outline-primary fw-semibold px-3">Record Fee Payment</a>
+<a href="{% url 'attendance_overview' %}" class="btn btn-sm btn-outline-secondary fw-semibold px-3">Daily Register</a>
+{% endblock %}
+
+{% block content %}
+<!-- Executive Academic Highlights Banner Slider (Carousel) in Blue & White -->
+<div id="heroAcademicCarousel" class="carousel slide hero-slider-card mb-4" data-bs-ride="carousel" data-bs-interval="6000">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroAcademicCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#heroAcademicCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#heroAcademicCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+
+    <div class="carousel-inner">
+        <!-- Slide 1: JEE Advanced & NEET Rank Felicitation -->
+        <div class="carousel-item active">
+            <div class="slider-slide-content">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                    <span class="slider-tag">National Academic Directorate &bull; Kota Main Campus</span>
+                    <span class="badge bg-white text-primary fw-bold px-2 py-1" style="font-size: 0.75rem;">Session 2026-27</span>
+                </div>
+                <h3 class="slider-headline">All-India Minor Test Series (AITS-04) Results Declared</h3>
+                <p class="slider-description">
+                    Over 1,240 aspirants across Kota, Delhi NCR, and Jaipur centers appeared for the computer-based assessment. Subject-wise percentile analytics and negative marking diagnostic reports are now available on the student dossier.
+                </p>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <a href="{% url 'test_list' %}" class="btn btn-sm btn-light text-primary fw-bold px-3">Review Test Scores</a>
+                    <a href="{% url 'batch_list' %}" class="btn btn-sm btn-outline-light px-3">Batch Rosters</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: VidyaSetu Talent Exam (VSAT) -->
+        <div class="carousel-item">
+            <div class="slider-slide-content">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                    <span class="slider-tag">Scholarship Aptitude & Concession Cell</span>
+                    <span class="badge bg-white text-primary fw-bold px-2 py-1" style="font-size: 0.75rem;">Phase-III Admissions</span>
+                </div>
+                <h3 class="slider-headline">VidyaSetu Scholarship Aptitude Test (VSAT) Concessions Active</h3>
+                <p class="slider-description">
+                    Eligible aspirants from CBSE, ICSE, and State Boards can claim up to 50% tuition fee concessions based on VSAT merit ranks or Class 10 board scores (95%+). Use the interactive concession calculator below to compute net course fees.
+                </p>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <a href="#calculatorSection" class="btn btn-sm btn-light text-primary fw-bold px-3">Open Fee Calculator</a>
+                    <a href="{% url 'enrollment_create' %}" class="btn btn-sm btn-outline-light px-3">Admit with Concession</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: NTA JEE Main & Board Crash Drills -->
+        <div class="carousel-item">
+            <div class="slider-slide-content">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                    <span class="slider-tag">Exam Cell Circular</span>
+                    <span class="badge bg-white text-primary fw-bold px-2 py-1" style="font-size: 0.75rem;">NTA Protocol</span>
+                </div>
+                <h3 class="slider-headline">NTA JEE Main 2027 Session I Guidance & Verification Desk</h3>
+                <p class="slider-description">
+                    Dedicated verification counter operational at Academic Block Room 102 from 10:00 AM to 6:00 PM. Parents and candidates may get Aadhaar bio-demographic details and category certificates validated before final submission.
+                </p>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <a href="{% url 'notice_list' %}" class="btn btn-sm btn-light text-primary fw-bold px-3">View Circulars</a>
+                    <a href="{% url 'student_list' %}" class="btn btn-sm btn-outline-light px-3">Check Student Roster</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carousel Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroAcademicCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroAcademicCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<!-- Executive Financial & Academic KPI Cards in Blue & White -->
+<div class="row g-3 mb-4">
+    <!-- Active Students -->
+    <div class="col-sm-6 col-xl-2">
+        <div class="metric-box border-primary-top">
+            <div class="metric-caption">Active Enrollments</div>
+            <div class="metric-number text-primary">{{ total_students }}</div>
+            <div class="metric-detail">
+                <span>JEE & NEET Aspirants</span>
+                <a href="{% url 'student_list' %}?status=ACTIVE" class="text-decoration-none small text-primary fw-bold">View</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teaching Faculty -->
+    <div class="col-sm-6 col-xl-2">
+        <div class="metric-box border-sky-top">
+            <div class="metric-caption">Senior Faculty</div>
+            <div class="metric-number" style="color: #0284c7;">{{ total_faculty }}</div>
+            <div class="metric-detail">
+                <span>IIT / AIIMS Mentors</span>
+                <a href="{% url 'faculty_list' %}" class="text-decoration-none small text-primary fw-bold">Roster</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ongoing Batches -->
+    <div class="col-sm-6 col-xl-2">
+        <div class="metric-box border-primary-top">
+            <div class="metric-caption">Classroom Cohorts</div>
+            <div class="metric-number text-primary">{{ ongoing_batches }}</div>
+            <div class="metric-detail">
+                <span>Kota & Delhi Centers</span>
+                <a href="{% url 'batch_list' %}?status=ONGOING" class="text-decoration-none small text-primary fw-bold">Schedules</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Fee Collections (INR) -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="metric-box border-success-top">
+            <div class="metric-caption">Gross Tuition Collection</div>
+            <div class="metric-number text-success">{{ total_collected|inr_compact }}</div>
+            <div class="metric-detail">
+                <span class="text-muted small">{{ total_collected|inr }}</span>
+                <a href="{% url 'payment_list' %}" class="text-decoration-none small text-success fw-bold">Tax Invoices</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Receivables (INR) -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="metric-box border-danger-top">
+            <div class="metric-caption">Tuition Dues (Receivables)</div>
+            <div class="metric-number text-danger">{{ pending_fees|inr_compact }}</div>
+            <div class="metric-detail">
+                <span class="text-muted small">{{ pending_fees|inr }}</span>
+                <a href="{% url 'enrollment_list' %}" class="text-decoration-none small text-danger fw-bold">Due Accounts</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive Scholarship & Concession Calculator Slider Widget -->
+<div id="calculatorSection" class="panel-card mb-4 border border-primary-subtle">
+    <div class="panel-header bg-subtle">
+        <div class="d-flex align-items-center gap-2">
+            <span class="fw-bold text-primary">Interactive Scholarship Concession & Installment Slider</span>
+            <span class="badge bg-primary text-white small" style="font-size: 0.7rem;">Dynamic Tool</span>
+        </div>
+        <span class="text-muted small">Standard GST SAC 999293 Guidelines</span>
+    </div>
+    <div class="p-3 p-md-4">
+        <div class="row g-4 align-items-center">
+            <!-- Left Controls: Slider & Program Selector -->
+            <div class="col-lg-6 border-end-lg">
+                <div class="mb-3">
+                    <label class="form-label" for="sliderCourseSelect">Select Academic Program:</label>
+                    <select id="sliderCourseSelect" class="form-select form-select-sm">
+                        <option value="148000" selected>JEE (Main & Advanced) Two-Year Pinnacle - Base ₹1,48,000</option>
+                        <option value="135000">NEET-UG Medical Achievers Batch - Base ₹1,35,000</option>
+                        <option value="68000">Class 10 CBSE Board + NTSE Olympiad - Base ₹68,000</option>
+                        <option value="42000">CUET-UG Comprehensive Crash Course - Base ₹42,000</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label mb-0" for="scholarshipRange">Adjust Merit Concession / Scholarship Slider:</label>
+                        <span id="sliderPercentDisplay" class="slider-value-display">20%</span>
+                    </div>
+                    <input type="range" class="custom-range-slider" min="0" max="50" step="5" value="20" id="scholarshipRange">
+                    <div class="d-flex justify-content-between text-muted small mt-1 font-monospace">
+                        <span>0% (Standard)</span>
+                        <span>15%</span>
+                        <span>25% (Merit)</span>
+                        <span>35%</span>
+                        <span>50% (Super-30)</span>
+                    </div>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <span class="text-muted small fw-semibold">Quick Presets:</span>
+                    <button type="button" class="btn btn-xs btn-outline-primary py-0 px-2 btn-preset-slider" data-val="10">10% Early Bird</button>
+                    <button type="button" class="btn btn-xs btn-outline-primary py-0 px-2 btn-preset-slider" data-val="20">20% Board 95%+</button>
+                    <button type="button" class="btn btn-xs btn-outline-primary py-0 px-2 btn-preset-slider" data-val="30">30% VSAT Rank</button>
+                    <button type="button" class="btn btn-xs btn-outline-primary py-0 px-2 btn-preset-slider" data-val="50">50% Super 30</button>
+                </div>
+            </div>
+
+            <!-- Right Output: Dynamic Breakdown -->
+            <div class="col-lg-6">
+                <div class="p-3 bg-light rounded border border-blue-subtle">
+                    <div class="row g-2 text-center text-md-start">
+                        <div class="col-sm-4">
+                            <span class="text-muted d-block small">Concession Amount:</span>
+                            <span id="concessionAmountDisplay" class="fs-5 fw-bold text-danger inr-amount">₹29,600</span>
+                        </div>
+                        <div class="col-sm-4">
+                            <span class="text-muted d-block small">Net Course Fee:</span>
+                            <span id="netFeeDisplay" class="fs-5 fw-bold text-primary inr-amount">₹1,18,400</span>
+                        </div>
+                        <div class="col-sm-4">
+                            <span class="text-muted d-block small">Per Term (2 Installments):</span>
+                            <span id="installmentDisplay" class="fs-5 fw-bold text-success inr-amount">₹59,200</span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top small text-muted">
+                        <span>Compliant with Indian Tuition Invoice Norms (SAC 999293)</span>
+                        <a href="{% url 'enrollment_create' %}" class="btn btn-sm btn-primary py-0 px-2 fw-semibold">Enroll at this Fee</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Secondary Operational Strip: Live Attendance Register Snapshot -->
+<div class="panel-card mb-4">
+    <div class="p-3 d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            <div>
+                <span class="fw-bold text-dark d-block">Today's Classroom Attendance Register</span>
+                <span class="text-muted small">Date: {{ today|date:"l, d F Y" }} &bull; Kota Central & Delhi Campuses</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 ms-lg-3">
+                <span class="status-pill pill-present">Present: {{ att_present }}</span>
+                <span class="status-pill pill-late">Late: {{ att_late }}</span>
+                <span class="status-pill pill-absent">Absent: {{ att_absent }}</span>
+                <span class="badge bg-light text-secondary border small">Total Marked: {{ att_total }}</span>
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'attendance_overview' %}?date={{ today|date:'Y-m-d' }}" class="btn btn-sm btn-outline-primary fw-semibold">Open Daily Register Matrix</a>
+        </div>
+    </div>
+</div>
+
+<!-- Main Dashboard Grid -->
+<div class="row g-4">
+    <!-- Left Section: Enrollments & Billing Logs -->
+    <div class="col-lg-8">
+        <!-- Recent Student Admissions -->
+        <div class="panel-card">
+            <div class="panel-header">
+                <div>
+                    <span class="fw-bold">Recent Admissions & Batch Allocations</span>
+                    <span class="badge bg-light text-primary border ms-2">Session 2026-27</span>
+                </div>
+                <a href="{% url 'enrollment_list' %}" class="btn btn-sm btn-link text-decoration-none p-0 fw-semibold">View All Enrollments</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-custom align-middle">
+                    <thead>
+                        <tr>
+                            <th>Roll / Reg No</th>
+                            <th>Student Particulars</th>
+                            <th>Assigned Cohort</th>
+                            <th>Net Course Fee</th>
+                            <th>Fee Balance</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enr in recent_enrollments %}
+                        <tr>
+                            <td><span class="id-tag">{{ enr.student.student_id }}</span></td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="avatar-chip avatar-primary">{{ enr.student.initials }}</span>
+                                    <div>
+                                        <a href="{% url 'student_detail' enr.student.pk %}" class="fw-bold text-dark text-decoration-none d-block">
+                                            {{ enr.student.full_name }}
+                                        </a>
+                                        <span class="text-muted small">{{ enr.student.target_exam }} &bull; {{ enr.student.get_board_display }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{% url 'batch_detail' enr.batch.pk %}" class="text-decoration-none fw-semibold text-primary">{{ enr.batch.batch_code }}</a>
+                                <div class="text-muted small">{{ enr.batch.name }}</div>
+                            </td>
+                            <td class="inr-amount">{{ enr.net_fee|inr }}</td>
+                            <td class="inr-amount {% if enr.balance_due > 0 %}text-danger fw-bold{% else %}text-success{% endif %}">
+                                {{ enr.balance_due|inr }}
+                            </td>
+                            <td>
+                                {% if enr.payment_status == 'PAID' %}
+                                <span class="status-pill pill-paid">Cleared</span>
+                                {% elif enr.payment_status == 'PARTIAL' %}
+                                <span class="status-pill pill-partial">Installment</span>
+                                {% else %}
+                                <span class="status-pill pill-pending">Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No student enrollments logged yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recent Fee Transactions (GST Compliant) -->
+        <div class="panel-card">
+            <div class="panel-header">
+                <div>
+                    <span class="fw-bold">Recent Fee Collections & GST Tax Invoices</span>
+                    <span class="badge bg-light text-primary border ms-2">SAC: 999293</span>
+                </div>
+                <a href="{% url 'payment_list' %}" class="btn btn-sm btn-link text-decoration-none p-0 fw-semibold">All Invoices</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-custom align-middle">
+                    <thead>
+                        <tr>
+                            <th>Invoice / Receipt</th>
+                            <th>Student</th>
+                            <th>Remittance Mode</th>
+                            <th>Bank Ref / UPI UTR</th>
+                            <th>Date</th>
+                            <th>Remitted Amount</th>
+                            <th class="text-end">Tax Bill</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in recent_payments %}
+                        <tr>
+                            <td><span class="id-tag">{{ payment.receipt_number }}</span></td>
+                            <td>
+                                <div class="fw-bold text-dark">{{ payment.enrollment.student.full_name }}</div>
+                                <span class="text-muted small">{{ payment.enrollment.batch.batch_code }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">{{ payment.get_payment_method_display }}</span>
+                            </td>
+                            <td class="small text-muted font-monospace text-primary">{{ payment.transaction_reference|default:"-" }}</td>
+                            <td class="text-muted small">{{ payment.payment_date|date:"d M Y" }}</td>
+                            <td class="inr-amount text-success fs-6">{{ payment.amount|inr }}</td>
+                            <td class="text-end">
+                                <a href="{% url 'payment_receipt' payment.pk %}" class="btn btn-xs btn-outline-primary py-0 px-2 fw-semibold" style="font-size: 0.775rem;">
+                                    Print Bill
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">No fee remittances recorded yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Section: Assessments & Circulars -->
+    <div class="col-lg-4">
+        <!-- Upcoming All-India Assessments -->
+        <div class="panel-card">
+            <div class="panel-header">
+                <span class="fw-bold">Scheduled Assessments (AITS)</span>
+                <a href="{% url 'test_list' %}" class="btn btn-sm btn-link text-decoration-none p-0 fw-semibold">View All</a>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for test in upcoming_tests %}
+                <div class="list-group-item p-3">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <span class="fw-bold text-dark">{{ test.title }}</span>
+                        <span class="badge bg-light text-primary border text-nowrap">{{ test.test_date|date:"d M" }}</span>
+                    </div>
+                    <div class="small text-muted mb-2">
+                        <span>Cohort: <strong>{{ test.batch.batch_code }}</strong></span> &bull; 
+                        <span>Max Marks: <strong>{{ test.total_marks }}</strong></span> &bull; 
+                        <span>Pass: <strong>{{ test.passing_marks }}</strong></span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-1 border-top">
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle small">NTA Pattern</span>
+                        <a href="{% url 'enter_marks' test.pk %}" class="btn btn-sm btn-link p-0 text-decoration-none small fw-semibold">Enter Scores</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="p-3 text-center text-muted small">No assessments scheduled in the next 7 days.</div>
+                {% endfor %}
+            </div>
+            <div class="p-2 bg-light border-top text-center">
+                <a href="{% url 'test_create' %}" class="btn btn-sm btn-outline-primary w-100 fw-semibold">Schedule Minor / Major Test</a>
+            </div>
+        </div>
+
+        <!-- Official Administrative Circulars -->
+        <div class="panel-card">
+            <div class="panel-header">
+                <span class="fw-bold">Institutional Circulars & Notices</span>
+                <a href="{% url 'notice_list' %}" class="btn btn-sm btn-link text-decoration-none p-0 fw-semibold">Circulars</a>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for notice in active_notices %}
+                <div class="list-group-item p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="status-pill {% if notice.priority == 'URGENT' %}pill-absent{% elif notice.priority == 'HIGH' %}pill-late{% else %}pill-completed{% endif %}">
+                            {{ notice.get_priority_display }}
+                        </span>
+                        <span class="text-muted small">{{ notice.published_date|date:"d M Y" }}</span>
+                    </div>
+                    <div class="fw-bold text-dark mb-1">{{ notice.title }}</div>
+                    <p class="text-secondary small mb-2" style="line-height: 1.4;">{{ notice.content|truncatewords:22 }}</p>
+                    <span class="badge bg-light text-muted border small">Audience: {{ notice.get_target_group_display }}</span>
+                </div>
+                {% empty %}
+                <div class="p-3 text-center text-muted small">No circulars posted.</div>
+                {% endfor %}
+            </div>
+            <div class="p-2 bg-light border-top text-center">
+                <a href="{% url 'notice_create' %}" class="btn btn-sm btn-outline-primary w-100 fw-semibold">Publish Circular</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

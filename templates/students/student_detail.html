@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load coaching_tags %}
+
+{% block title %}Student: {{ student.full_name }} ({{ student.student_id }}){% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-custom">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'student_list' %}">Students</a></li>
+    <li class="breadcrumb-item active">{{ student.student_id }}</li>
+</ol>
+{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'enrollment_create' %}?student_id={{ student.pk }}" class="btn btn-sm btn-primary fw-medium px-3">Assign Batch</a>
+<a href="{% url 'student_update' student.pk %}" class="btn btn-sm btn-outline-secondary fw-medium px-3">Edit Particulars</a>
+<a href="{% url 'student_delete' student.pk %}" class="btn btn-sm btn-outline-danger fw-medium px-3">Delete Record</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <!-- Student Profile Card -->
+    <div class="col-lg-4">
+        <div class="panel-card mb-4">
+            <div class="panel-header">
+                <span>Admission Dossier</span>
+                <span class="id-tag">{{ student.student_id }}</span>
+            </div>
+            <div class="p-3 p-md-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="avatar-chip avatar-primary" style="width: 48px; height: 48px; font-size: 1.15rem;">
+                        {{ student.initials }}
+                    </span>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">{{ student.full_name }}</h5>
+                        <div class="text-primary small fw-semibold">{{ student.target_exam }}</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    {% if student.status == 'ACTIVE' %}
+                    <span class="status-pill pill-active">Active Aspirant</span>
+                    {% elif student.status == 'INACTIVE' %}
+                    <span class="status-pill pill-inactive">Inactive</span>
+                    {% elif student.status == 'COMPLETED' %}
+                    <span class="status-pill pill-completed">Completed</span>
+                    {% else %}
+                    <span class="status-pill pill-suspended">Suspended</span>
+                    {% endif %}
+                </div>
+
+                <div class="border-top pt-3 small">
+                    <div class="row g-2">
+                        <div class="col-5 text-muted">Academic Board:</div>
+                        <div class="col-7 fw-semibold">{{ student.get_board_display }}</div>
+
+                        <div class="col-5 text-muted">Category:</div>
+                        <div class="col-7 fw-semibold">{{ student.get_category_display }}</div>
+
+                        {% if student.aadhaar_last_four %}
+                        <div class="col-5 text-muted">Aadhaar (Last 4):</div>
+                        <div class="col-7 font-monospace">XXXX-XXXX-{{ student.aadhaar_last_four }}</div>
+                        {% endif %}
+
+                        <div class="col-5 text-muted">WhatsApp / Phone:</div>
+                        <div class="col-7 font-monospace fw-medium">{{ student.phone }}</div>
+
+                        <div class="col-5 text-muted">Email:</div>
+                        <div class="col-7 text-break">{{ student.email }}</div>
+
+                        <div class="col-5 text-muted">Parent / Guardian:</div>
+                        <div class="col-7 fw-medium">{{ student.parent_name }}</div>
+
+                        <div class="col-5 text-muted">Parent Contact:</div>
+                        <div class="col-7 font-monospace">{{ student.parent_phone }}</div>
+
+                        <div class="col-5 text-muted">Admission Date:</div>
+                        <div class="col-7">{{ student.enrollment_date|date:"d M Y" }}</div>
+
+                        <div class="col-5 text-muted">Address:</div>
+                        <div class="col-7">{{ student.address|default:"Not specified" }}</div>
+                    </div>
+                </div>
+
+                {% if student.notes %}
+                <div class="border-top pt-3 mt-3">
+                    <span class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.725rem;">Counseling & Rank Notes:</span>
+                    <p class="small text-secondary mb-0">{{ student.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Academic & Financial Snapshot -->
+        <div class="panel-card">
+            <div class="panel-header">
+                <span>Academic & Fee Overview</span>
+            </div>
+            <div class="p-3">
+                <div class="row text-center g-2 mb-3">
+                    <div class="col-4">
+                        <div class="p-2 border rounded bg-light">
+                            <div class="text-muted small">Sessions</div>
+                            <div class="fs-5 fw-bold">{{ total_classes }}</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 border rounded bg-light">
+                            <div class="text-muted small">Present</div>
+                            <div class="fs-5 fw-bold text-success">{{ present_classes }}</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 border rounded bg-light">
+                            <div class="text-muted small">Rate %</div>
+                            <div class="fs-5 fw-bold {% if attendance_rate >= 75 %}text-success{% else %}text-danger{% endif %}">{{ attendance_rate }}%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-3 border rounded bg-light text-center">
+                    <span class="text-muted small d-block">Outstanding Tuition Balance:</span>
+                    <span class="fs-4 fw-bold inr-amount {% if student.total_outstanding_fees > 0 %}text-danger{% else %}text-success{% endif %}">
+                        {{ student.total_outstanding_fees|inr }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Section: Enrolled Batches & Assessment Scores -->
+    <div class="col-lg-8">
+        <!-- Enrolled Batches -->
+        <div class="panel-card mb-4">
+            <div class="panel-header">
+                <span>Batch Allocations & Fee Accounts</span>
+                <a href="{% url 'enrollment_create' %}?student_id={{ student.pk }}" class="btn btn-sm btn-outline-primary py-0 fw-medium">Allocate Batch</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-custom align-middle">
+                    <thead>
+                        <tr>
+                            <th>Batch Code</th>
+                            <th>Program</th>
+                            <th>Schedule</th>
+                            <th>Net Course Fee</th>
+                            <th>Fee Remitted</th>
+                            <th>Balance Due</th>
+                            <th>Status</th>
+                            <th>Remittance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enr in enrollments %}
+                        <tr>
+                            <td><a href="{% url 'batch_detail' enr.batch.pk %}" class="fw-bold text-decoration-none">{{ enr.batch.batch_code }}</a></td>
+                            <td class="small">{{ enr.batch.course.name }}</td>
+                            <td class="small text-muted">{{ enr.batch.schedule_days }}</td>
+                            <td class="inr-amount">{{ enr.net_fee|inr }}</td>
+                            <td class="inr-amount text-success">{{ enr.total_paid|inr }}</td>
+                            <td class="inr-amount {% if enr.balance_due > 0 %}text-danger fw-bold{% else %}text-muted{% endif %}">
+                                {{ enr.balance_due|inr }}
+                            </td>
+                            <td>
+                                {% if enr.payment_status == 'PAID' %}
+                                <span class="status-pill pill-paid">Cleared</span>
+                                {% elif enr.payment_status == 'PARTIAL' %}
+                                <span class="status-pill pill-partial">Installment</span>
+                                {% else %}
+                                <span class="status-pill pill-pending">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if enr.balance_due > 0 %}
+                                <a href="{% url 'payment_create' %}?enrollment_id={{ enr.pk }}" class="btn btn-xs btn-primary py-0 px-2 fw-medium" style="font-size: 0.775rem;">Pay Fee</a>
+                                {% else %}
+                                <span class="text-success small fw-semibold">No Dues</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">No batches allocated for this student.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Assessment Results (AITS) -->
+        <div class="panel-card">
+            <div class="panel-header">
+                <span>All-India Test Series & Minor Assessment History</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-custom align-middle">
+                    <thead>
+                        <tr>
+                            <th>Assessment Title</th>
+                            <th>Batch</th>
+                            <th>Exam Date</th>
+                            <th>Score Obtained</th>
+                            <th>Percentage</th>
+                            <th>Grade</th>
+                            <th>Result</th>
+                            <th>Mentor Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in test_results %}
+                        <tr>
+                            <td class="fw-medium">{{ result.test.title }}</td>
+                            <td class="small text-muted">{{ result.test.batch.batch_code }}</td>
+                            <td class="small text-muted">{{ result.test.test_date|date:"d M Y" }}</td>
+                            <td class="fw-bold">{{ result.marks_obtained }} / {{ result.test.total_marks }}</td>
+                            <td>{{ result.percentage }}%</td>
+                            <td><span class="badge bg-light text-dark border">{{ result.grade|default:"-" }}</span></td>
+                            <td>
+                                {% if result.is_passed %}
+                                <span class="status-pill pill-paid">Qualified</span>
+                                {% else %}
+                                <span class="status-pill pill-pending">Unqualified</span>
+                                {% endif %}
+                            </td>
+                            <td class="small text-muted">{{ result.remarks|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">No test results recorded yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

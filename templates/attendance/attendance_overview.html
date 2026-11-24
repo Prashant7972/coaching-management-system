@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Daily Attendance Register{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-custom">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item active">Daily Attendance Register</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="panel-card mb-4">
+    <div class="p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-auto">
+                <label for="date-picker" class="col-form-label col-form-label-sm fw-semibold">Select Session Date:</label>
+            </div>
+            <div class="col-auto">
+                <input type="date" id="date-picker" name="date" class="form-control form-control-sm font-monospace" value="{{ selected_date|date:'Y-m-d' }}">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-sm btn-dark fw-medium px-3">Open Date Register</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="panel-card">
+    <div class="panel-header">
+        <div>
+            <span class="fw-bold">Attendance Register for {{ selected_date|date:"l, d F Y" }}</span>
+            <span class="badge bg-light text-secondary border ms-2">{{ batch_stats|length }} Cohorts</span>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr>
+                    <th>Batch Code</th>
+                    <th>Program & Lead Faculty</th>
+                    <th>Schedule</th>
+                    <th>Enrolled</th>
+                    <th>Marked</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Late</th>
+                    <th>Completion</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in batch_stats %}
+                <tr>
+                    <td>
+                        <a href="{% url 'batch_detail' item.batch.pk %}" class="fw-bold text-decoration-none">{{ item.batch.batch_code }}</a>
+                    </td>
+                    <td>
+                        <div class="text-dark fw-medium">{{ item.batch.course.name }}</div>
+                        <div class="text-muted small">Mentor: {{ item.batch.faculty.full_name|default:"Unassigned" }}</div>
+                    </td>
+                    <td class="small text-muted">{{ item.batch.schedule_days }} &bull; {{ item.batch.start_time|time:"H:i" }}</td>
+                    <td><span class="badge bg-light text-dark border">{{ item.total_enrolled }}</span></td>
+                    <td>{{ item.marked }} / {{ item.total_enrolled }}</td>
+                    <td class="text-success fw-bold">{{ item.present }}</td>
+                    <td class="{% if item.absent > 0 %}text-danger fw-bold{% else %}text-muted{% endif %}">{{ item.absent }}</td>
+                    <td class="text-warning-emphasis fw-bold">{{ item.late }}</td>
+                    <td>
+                        {% if item.is_fully_marked %}
+                        <span class="status-pill pill-present">Marked</span>
+                        {% elif item.marked > 0 %}
+                        <span class="status-pill pill-late">Partial</span>
+                        {% else %}
+                        <span class="status-pill pill-inactive">Unmarked</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'mark_attendance' item.batch.pk %}?date={{ selected_date|date:'Y-m-d' }}" class="btn btn-sm btn-outline-primary py-0 fw-medium">
+                            {% if item.is_fully_marked %}Edit Attendance{% else %}Mark Attendance{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="text-center py-4 text-muted">No active cohorts scheduled.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

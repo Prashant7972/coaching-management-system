@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Faculty: {{ faculty.full_name }}{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-portal">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'faculty_list' %}">Faculty</a></li>
+    <li class="breadcrumb-item active">{{ faculty.faculty_id }}</li>
+</ol>
+{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'batch_create' %}" class="btn btn-sm btn-primary">Assign New Batch</a>
+<a href="{% url 'faculty_update' faculty.pk %}" class="btn btn-sm btn-outline-secondary">Edit Faculty</a>
+<a href="{% url 'faculty_delete' faculty.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card card-portal mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Faculty Profile</span>
+                <span class="id-badge">{{ faculty.faculty_id }}</span>
+            </div>
+            <div class="card-body">
+                <h5 class="fw-bold text-dark mb-1">{{ faculty.full_name }}</h5>
+                <p class="text-secondary mb-2">{{ faculty.specialization }}</p>
+
+                <div class="mb-3">
+                    {% if faculty.status == 'ACTIVE' %}
+                    <span class="badge bg-success badge-status">Active Faculty</span>
+                    {% elif faculty.status == 'ON_LEAVE' %}
+                    <span class="badge bg-warning text-dark badge-status">On Leave</span>
+                    {% else %}
+                    <span class="badge bg-secondary badge-status">Resigned</span>
+                    {% endif %}
+                </div>
+
+                <div class="border-top pt-3 small">
+                    <div class="row g-2">
+                        <div class="col-5 text-muted">Qualification:</div>
+                        <div class="col-7 fw-medium">{{ faculty.qualification }}</div>
+
+                        <div class="col-5 text-muted">Phone:</div>
+                        <div class="col-7 fw-medium">{{ faculty.phone }}</div>
+
+                        <div class="col-5 text-muted">Email:</div>
+                        <div class="col-7 fw-medium text-break">{{ faculty.email }}</div>
+
+                        <div class="col-5 text-muted">Joining Date:</div>
+                        <div class="col-7 fw-medium">{{ faculty.joining_date|date:"Y-m-d" }}</div>
+
+                        <div class="col-5 text-muted">Monthly Salary:</div>
+                        <div class="col-7 fw-medium currency-cell">${{ faculty.salary_monthly|floatformat:2|intcomma }}</div>
+                    </div>
+                </div>
+
+                {% if faculty.notes %}
+                <div class="border-top pt-3 mt-3">
+                    <span class="text-secondary small fw-bold d-block mb-1">Internal Notes:</span>
+                    <p class="small text-muted mb-0">{{ faculty.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card card-portal">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Assigned Batches ({{ batches.count }})</span>
+                <a href="{% url 'batch_create' %}" class="btn btn-sm btn-link text-decoration-none p-0">Create Batch</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-portal align-middle">
+                    <thead>
+                        <tr>
+                            <th>Batch Code</th>
+                            <th>Course</th>
+                            <th>Schedule</th>
+                            <th>Timing</th>
+                            <th>Room</th>
+                            <th>Enrolled</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for batch in batches %}
+                        <tr>
+                            <td><a href="{% url 'batch_detail' batch.pk %}" class="fw-semibold text-decoration-none">{{ batch.batch_code }}</a></td>
+                            <td class="small">{{ batch.course.name }}</td>
+                            <td class="small">{{ batch.schedule_days }}</td>
+                            <td class="small text-muted">{{ batch.start_time|time:"H:i" }} - {{ batch.end_time|time:"H:i" }}</td>
+                            <td class="small">{{ batch.room_number|default:"TBD" }}</td>
+                            <td><span class="badge bg-light text-dark border">{{ batch.enrolled_count }} / {{ batch.max_capacity }}</span></td>
+                            <td>
+                                {% if batch.status == 'ONGOING' %}
+                                <span class="badge bg-success badge-status">Ongoing</span>
+                                {% elif batch.status == 'UPCOMING' %}
+                                <span class="badge bg-info text-dark badge-status">Upcoming</span>
+                                {% elif batch.status == 'COMPLETED' %}
+                                <span class="badge bg-secondary badge-status">Completed</span>
+                                {% else %}
+                                <span class="badge bg-danger badge-status">Cancelled</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">No batches currently assigned to this faculty member.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

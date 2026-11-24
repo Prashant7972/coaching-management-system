@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load coaching_tags %}
+
+{% block title %}Teaching Faculty & Mentors Directory{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-custom">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item active">Faculty Mentors</li>
+</ol>
+{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'faculty_create' %}" class="btn btn-sm btn-primary fw-medium px-3">Add Faculty Member</a>
+{% endblock %}
+
+{% block content %}
+<div class="panel-card mb-4">
+    <div class="p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-6">
+                <input type="text" name="q" class="form-control form-control-sm" placeholder="Search by faculty ID, name, specialization, or email..." value="{{ query }}">
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">All Faculty Statuses</option>
+                    <option value="ACTIVE" {% if status_filter == 'ACTIVE' %}selected{% endif %}>Active Mentors</option>
+                    <option value="ON_LEAVE" {% if status_filter == 'ON_LEAVE' %}selected{% endif %}>On Sabbatical / Leave</option>
+                    <option value="RESIGNED" {% if status_filter == 'RESIGNED' %}selected{% endif %}>Relieved</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-dark fw-medium px-3">Filter</button>
+                {% if query or status_filter %}
+                <a href="{% url 'faculty_list' %}" class="btn btn-sm btn-outline-secondary">Reset</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="panel-card">
+    <div class="panel-header">
+        <div>
+            <span class="fw-bold">Faculty Mentors & Department Leads</span>
+            <span class="badge bg-light text-secondary border ms-2">{{ faculty_members.count }} Mentors</span>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr>
+                    <th>Faculty Code</th>
+                    <th>Mentor Name</th>
+                    <th>Academic Qualifications</th>
+                    <th>Subject Specialization</th>
+                    <th>Phone</th>
+                    <th>Monthly Remuneration</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in faculty_members %}
+                <tr>
+                    <td><span class="id-tag">{{ member.faculty_id }}</span></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="avatar-chip avatar-amber">{{ member.initials }}</span>
+                            <div>
+                                <a href="{% url 'faculty_detail' member.pk %}" class="fw-bold text-dark text-decoration-none d-block">
+                                    {{ member.full_name }}
+                                </a>
+                                <span class="text-muted small">{{ member.email }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="small">{{ member.qualification }}</td>
+                    <td><span class="badge bg-light text-dark border">{{ member.specialization }}</span></td>
+                    <td class="font-monospace small">{{ member.phone }}</td>
+                    <td class="inr-amount">{{ member.salary_monthly|inr }}</td>
+                    <td>
+                        {% if member.status == 'ACTIVE' %}
+                        <span class="status-pill pill-active">Active</span>
+                        {% elif member.status == 'ON_LEAVE' %}
+                        <span class="status-pill pill-partial">On Leave</span>
+                        {% else %}
+                        <span class="status-pill pill-inactive">Resigned</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="btn-group btn-group-sm">
+                            <a href="{% url 'faculty_detail' member.pk %}" class="btn btn-outline-secondary py-0">Profile</a>
+                            <a href="{% url 'faculty_update' member.pk %}" class="btn btn-outline-secondary py-0">Edit</a>
+                            <a href="{% url 'faculty_delete' member.pk %}" class="btn btn-outline-danger py-0">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center py-4 text-muted">No faculty records match the selection.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

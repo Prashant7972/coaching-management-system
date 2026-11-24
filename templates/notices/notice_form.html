@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-portal">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'notice_list' %}">Notices</a></li>
+    <li class="breadcrumb-item active">{{ title }}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-portal">
+            <div class="card-header">{{ title }}</div>
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger mb-4">Please correct the indicated errors.</div>
+                    {% endif %}
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <label class="form-label" for="{{ form.title.id_for_label }}">Notice Headline / Title *</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}<div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.target_group.id_for_label }}">Target Audience *</label>
+                            {{ form.target_group }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.priority.id_for_label }}">Priority Level *</label>
+                            {{ form.priority }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.published_date.id_for_label }}">Published Date *</label>
+                            {{ form.published_date }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label" for="{{ form.content.id_for_label }}">Notice Content / Announcement Text *</label>
+                            {{ form.content }}
+                            {% if form.content.errors %}<div class="text-danger small mt-1">{{ form.content.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check">
+                                {{ form.is_active }}
+                                <label class="form-check-label ms-1" for="{{ form.is_active.id_for_label }}">Notice is Active and Visible</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                        <a href="{% url 'notice_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">Publish Notice</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

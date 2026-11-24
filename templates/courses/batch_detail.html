@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load coaching_tags %}
+
+{% block title %}Cohort: {{ batch.batch_code }} - {{ batch.name }}{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-custom">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'batch_list' %}">Batches</a></li>
+    <li class="breadcrumb-item active">{{ batch.batch_code }}</li>
+</ol>
+{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'enrollment_create' %}?batch_id={{ batch.pk }}" class="btn btn-sm btn-primary fw-medium px-3">Admit Student</a>
+<a href="{% url 'mark_attendance' batch.pk %}" class="btn btn-sm btn-outline-dark fw-medium px-3">Mark Attendance</a>
+<a href="{% url 'test_create' %}?batch_id={{ batch.pk }}" class="btn btn-sm btn-outline-secondary fw-medium px-3">Schedule Test</a>
+<a href="{% url 'batch_update' batch.pk %}" class="btn btn-sm btn-outline-secondary fw-medium px-3">Edit Batch</a>
+<a href="{% url 'batch_delete' batch.pk %}" class="btn btn-sm btn-outline-danger fw-medium px-3">Delete</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <!-- Batch Details Summary -->
+    <div class="col-lg-4">
+        <div class="panel-card mb-4">
+            <div class="panel-header">
+                <span>Batch Information</span>
+                <span class="id-tag">{{ batch.batch_code }}</span>
+            </div>
+            <div class="p-3 p-md-4">
+                <h5 class="fw-bold text-dark mb-1">{{ batch.name }}</h5>
+                <div class="text-secondary small mb-3">{{ batch.course.name }}</div>
+
+                <div class="mb-3">
+                    {% if batch.status == 'ONGOING' %}
+                    <span class="status-pill pill-active">Ongoing Session</span>
+                    {% elif batch.status == 'UPCOMING' %}
+                    <span class="status-pill pill-partial">Upcoming</span>
+                    {% elif batch.status == 'COMPLETED' %}
+                    <span class="status-pill pill-completed">Completed</span>
+                    {% else %}
+                    <span class="status-pill pill-suspended">Cancelled</span>
+                    {% endif %}
+                </div>
+
+                <div class="border-top pt-3 small">
+                    <div class="row g-2">
+                        <div class="col-5 text-muted">Faculty Incharge:</div>
+                        <div class="col-7 fw-bold">
+                            {% if batch.faculty %}
+                            <a href="{% url 'faculty_detail' batch.faculty.pk %}" class="text-decoration-none text-dark">{{ batch.faculty.full_name }}</a>
+                            {% else %}
+                            <span class="text-muted">Unassigned</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-5 text-muted">Schedule Days:</div>
+                        <div class="col-7 fw-medium">{{ batch.schedule_days }}</div>
+
+                        <div class="col-5 text-muted">Timings:</div>
+                        <div class="col-7 font-monospace">{{ batch.start_time|time:"H:i" }} - {{ batch.end_time|time:"H:i" }}</div>
+
+                        <div class="col-5 text-muted">Classroom / Lab:</div>
+                        <div class="col-7 fw-medium">{{ batch.room_number|default:"TBD" }}</div>
+
+                        <div class="col-5 text-muted">Session Range:</div>
+                        <div class="col-7">{{ batch.start_date|date:"d M Y" }} to {{ batch.end_date|date:"d M Y"|default:"Open" }}</div>
+
+                        <div class="col-5 text-muted">Seat Capacity:</div>
+                        <div class="col-7 fw-bold text-dark">{{ batch.enrolled_count }} / {{ batch.max_capacity }} ({{ batch.seats_available }} vacant)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scheduled Tests in this batch -->
+        <div class="panel-card mb-4">
+            <div class="panel-header">
+                <span>Batch Minor / Major Tests</span>
+                <a href="{% url 'test_create' %}?batch_id={{ batch.pk }}" class="btn btn-sm btn-link text-decoration-none p-0 fw-semibold">New Test</a>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for test in tests %}
+                <div class="list-group-item p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <a href="{% url 'test_detail' test.pk %}" class="fw-bold text-dark text-decoration-none">{{ test.title }}</a>
+                        <span class="badge bg-light text-dark border">{{ test.test_date|date:"d M" }}</span>
+                    </div>
+                    <div class="small text-muted d-flex justify-content-between mt-2">
+                        <span>Max Marks: {{ test.total_marks }}</span>
+                        <a href="{% url 'enter_marks' test.pk %}" class="text-decoration-none fw-semibold">Enter Scores</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="p-3 text-center text-muted small">No assessments scheduled for this batch.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Section: Enrolled Students Roster -->
+    <div class="col-lg-8">
+        <div class="panel-card">
+            <div class="panel-header">
+                <div>
+                    <span class="fw-bold">Classroom Student Roster ({{ enrollments.count }}/{{ batch.max_capacity }})</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'mark_attendance' batch.pk %}" class="btn btn-sm btn-outline-primary py-0 fw-medium">Mark Attendance</a>
+                    <a href="{% url 'enrollment_create' %}?batch_id={{ batch.pk }}" class="btn btn-sm btn-primary py-0 fw-medium">Admit Student</a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-custom align-middle">
+                    <thead>
+                        <tr>
+                            <th>Roll No</th>
+                            <th>Student Name</th>
+                            <th>WhatsApp Contact</th>
+                            <th>Fee Balance</th>
+                            <th>Account Status</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enr in enrollments %}
+                        <tr>
+                            <td><span class="id-tag">{{ enr.student.student_id }}</span></td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="avatar-chip avatar-primary">{{ enr.student.initials }}</span>
+                                    <div>
+                                        <a href="{% url 'student_detail' enr.student.pk %}" class="fw-bold text-dark text-decoration-none d-block">
+                                            {{ enr.student.full_name }}
+                                        </a>
+                                        <span class="text-muted small">Parent: {{ enr.student.parent_name }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="font-monospace small">{{ enr.student.phone }}</td>
+                            <td class="inr-amount {% if enr.balance_due > 0 %}text-danger fw-bold{% else %}text-muted{% endif %}">
+                                {{ enr.balance_due|inr }}
+                            </td>
+                            <td>
+                                {% if enr.payment_status == 'PAID' %}
+                                <span class="status-pill pill-paid">Cleared</span>
+                                {% elif enr.payment_status == 'PARTIAL' %}
+                                <span class="status-pill pill-partial">Installment</span>
+                                {% else %}
+                                <span class="status-pill pill-pending">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <a href="{% url 'enrollment_delete' enr.pk %}" class="btn btn-xs btn-outline-danger py-0 px-2" style="font-size: 0.775rem;">Drop</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No students currently enrolled in this batch.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

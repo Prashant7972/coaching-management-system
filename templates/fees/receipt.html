@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load coaching_tags %}
+
+{% block title %}Tax Invoice {{ payment.receipt_number }}{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-custom no-print">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'payment_list' %}">Fee Collections</a></li>
+    <li class="breadcrumb-item active">{{ payment.receipt_number }}</li>
+</ol>
+{% endblock %}
+
+{% block page_actions %}
+<div class="no-print d-flex gap-2">
+    <button onclick="window.print()" class="btn btn-sm btn-dark fw-medium px-3">Print Official Tax Invoice</button>
+    <a href="{% url 'payment_create' %}" class="btn btn-sm btn-primary fw-medium px-3">Record Another Fee</a>
+    <a href="{% url 'payment_list' %}" class="btn btn-sm btn-outline-secondary fw-medium px-3">Fee Register</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9 col-xl-8">
+        <div class="tax-receipt-card p-4 p-md-5">
+            <!-- Institutional Header -->
+            <div class="d-flex flex-wrap justify-content-between align-items-start border-bottom pb-3 mb-4">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="badge bg-dark px-2 py-1 fs-6 fw-bold">VSI</span>
+                        <h2 class="receipt-header-title mb-0">VIDYASETU CAREER INSTITUTE</h2>
+                    </div>
+                    <div class="text-secondary small fw-medium">Center of Excellence for JEE (Main & Adv) | NEET-UG | Foundation & Olympiads</div>
+                    <div class="text-muted small mt-1">
+                        Kota Central Campus: Plot 14-A, Indraprastha Industrial Area (IPIA), Road No. 1, Kota, Rajasthan - 324005<br>
+                        Phone: +91 (0744) 243-0000 / 01 &bull; Email: accounts@vidyasetu.internal &bull; Web: www.vidyasetu.internal
+                    </div>
+                </div>
+                <div class="text-md-end mt-3 mt-md-0">
+                    <span class="badge bg-dark px-3 py-1.5 text-uppercase fw-semibold mb-2" style="font-size: 0.8rem; letter-spacing: 0.06em;">GST Tax Invoice / Fee Receipt</span>
+                    <div class="id-tag fs-6 d-block mb-1">{{ payment.receipt_number }}</div>
+                    <div class="text-muted small">Date: <strong>{{ payment.payment_date|date:"d F Y" }}</strong></div>
+                    <div class="text-muted small">Center Code: <strong>KOTA-01 (Main)</strong></div>
+                </div>
+            </div>
+
+            <!-- Tax & Legal Metadata Bar -->
+            <div class="gst-meta-box mb-4">
+                <div class="row g-2 text-center text-md-start">
+                    <div class="col-6 col-md-3">
+                        <span class="text-muted d-block" style="font-size: 0.7rem;">GSTIN / UIN:</span>
+                        <strong class="text-dark">08AAAPV1234F1Z9</strong>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <span class="text-muted d-block" style="font-size: 0.7rem;">Permanent Account No (PAN):</span>
+                        <strong class="text-dark">AAAPV1234F</strong>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <span class="text-muted d-block" style="font-size: 0.7rem;">Services Accounting Code (SAC):</span>
+                        <strong class="text-dark">999293 (Coaching)</strong>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <span class="text-muted d-block" style="font-size: 0.7rem;">Academic Session:</span>
+                        <strong class="text-dark">2026 - 2027</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Particulars Grid -->
+            <div class="row g-3 mb-4 text-dark small">
+                <div class="col-md-6">
+                    <div class="p-3 border rounded bg-light h-100">
+                        <span class="text-secondary fw-bold text-uppercase d-block mb-2" style="font-size: 0.725rem; letter-spacing: 0.05em;">Student Particulars</span>
+                        <div class="row g-1">
+                            <div class="col-5 text-muted">Roll / Reg No:</div>
+                            <div class="col-7 fw-bold font-monospace text-primary">{{ payment.enrollment.student.student_id }}</div>
+
+                            <div class="col-5 text-muted">Student Name:</div>
+                            <div class="col-7 fw-bold">{{ payment.enrollment.student.full_name }}</div>
+
+                            <div class="col-5 text-muted">Parent / Guardian:</div>
+                            <div class="col-7">{{ payment.enrollment.student.parent_name }}</div>
+
+                            <div class="col-5 text-muted">WhatsApp / Phone:</div>
+                            <div class="col-7 font-monospace">{{ payment.enrollment.student.phone }}</div>
+
+                            <div class="col-5 text-muted">School Board / Cat:</div>
+                            <div class="col-7">{{ payment.enrollment.student.get_board_display }} ({{ payment.enrollment.student.get_category_display }})</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="p-3 border rounded bg-light h-100">
+                        <span class="text-secondary fw-bold text-uppercase d-block mb-2" style="font-size: 0.725rem; letter-spacing: 0.05em;">Course & Batch Allocation</span>
+                        <div class="row g-1">
+                            <div class="col-5 text-muted">Target Program:</div>
+                            <div class="col-7 fw-bold">{{ payment.enrollment.batch.course.name }}</div>
+
+                            <div class="col-5 text-muted">Batch Code:</div>
+                            <div class="col-7 fw-bold">{{ payment.enrollment.batch.batch_code }}</div>
+
+                            <div class="col-5 text-muted">Classroom:</div>
+                            <div class="col-7">{{ payment.enrollment.batch.room_number|default:"AryaBhatta Lecture Hall" }}</div>
+
+                            <div class="col-5 text-muted">Schedule / Days:</div>
+                            <div class="col-7">{{ payment.enrollment.batch.schedule_days }} ({{ payment.enrollment.batch.start_time|time:"H:i" }})</div>
+
+                            <div class="col-5 text-muted">Admission Date:</div>
+                            <div class="col-7">{{ payment.enrollment.enrollment_date|date:"d M Y" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Line Items Table -->
+            <table class="table receipt-table mb-4">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">Sr.</th>
+                        <th style="width: 55%;">Fee Component / Description</th>
+                        <th style="width: 15%;" class="text-center">SAC Code</th>
+                        <th style="width: 25%;" class="text-end">Amount (INR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center">1</td>
+                        <td>
+                            <strong>Comprehensive Tuition & Academic Delivery Fee</strong>
+                            <div class="text-muted small">Instructional lectures, classroom doubt clearance, mentoring by senior faculty</div>
+                        </td>
+                        <td class="text-center font-monospace small">999293</td>
+                        <td class="text-end inr-amount">{{ payment.enrollment.agreed_fee|inr }}</td>
+                    </tr>
+                    {% if payment.enrollment.discount > 0 %}
+                    <tr class="table-light">
+                        <td class="text-center">2</td>
+                        <td>
+                            <strong class="text-secondary">Less: VidyaSetu Talent Exam (VSAT) / Merit Scholarship Concession</strong>
+                            <div class="text-muted small">{{ payment.enrollment.remarks|default:"Institutional merit fee concession approved by Directorate" }}</div>
+                        </td>
+                        <td class="text-center font-monospace small">999293</td>
+                        <td class="text-end inr-amount text-danger">- {{ payment.enrollment.discount|inr }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr class="table-light fw-bold">
+                        <td colspan="3" class="text-end">Net Total Course Fee Payable:</td>
+                        <td class="text-end inr-amount text-dark">{{ payment.enrollment.net_fee|inr }}</td>
+                    </tr>
+                    <tr class="table-success fw-bold text-success fs-6">
+                        <td colspan="3" class="text-end text-success">Amount Remitted in this Transaction:</td>
+                        <td class="text-end inr-amount text-success fs-5">{{ payment.amount|inr }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Remittance Mode & Account Balances -->
+            <div class="row g-3 mb-4 text-dark small">
+                <div class="col-md-6">
+                    <div class="border rounded p-3 bg-white h-100">
+                        <div class="text-muted fw-semibold text-uppercase mb-2" style="font-size: 0.725rem;">Remittance Particulars</div>
+                        <div class="mb-1"><strong>Payment Mode:</strong> {{ payment.get_payment_method_display }}</div>
+                        {% if payment.transaction_reference %}
+                        <div class="mb-1"><strong>Bank Ref / UPI UTR / Cheque No:</strong> <span class="font-monospace fw-bold text-primary">{{ payment.transaction_reference }}</span></div>
+                        {% endif %}
+                        <div><strong>Receiving Desk:</strong> {{ payment.received_by }}</div>
+                        {% if payment.remarks %}
+                        <div class="text-muted mt-1"><em>Narration: {{ payment.remarks }}</em></div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="border rounded p-3 bg-white h-100">
+                        <div class="text-muted fw-semibold text-uppercase mb-2" style="font-size: 0.725rem;">Cumulative Account Position</div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Total Remitted to Date:</span>
+                            <span class="fw-bold inr-amount text-success">{{ payment.enrollment.total_paid|inr }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Outstanding Balance Due:</span>
+                            <span class="fw-bold inr-amount {% if payment.enrollment.balance_due > 0 %}text-danger{% else %}text-muted{% endif %}">
+                                {{ payment.enrollment.balance_due|inr }}
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between pt-1 border-top">
+                            <span class="text-muted">Fee Account Status:</span>
+                            <span class="fw-bold">
+                                {% if payment.enrollment.payment_status == 'PAID' %}
+                                <span class="text-success">Fully Cleared (No Dues)</span>
+                                {% else %}
+                                <span class="text-warning-emphasis">Installment Outstanding</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signatures and Official Seal -->
+            <div class="row pt-4 mt-3 text-center small text-muted align-items-end">
+                <div class="col-4">
+                    <div class="border-top pt-2">
+                        Student / Parent Signature
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="official-seal-box">
+                        Institutional Seal<br>VidyaSetu Kota
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="border-top pt-2">
+                        Authorized Accounts Officer<br>
+                        <strong class="text-dark">{{ payment.received_by }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terms & Statutory Note -->
+            <div class="text-muted small mt-4 pt-3 border-top" style="font-size: 0.725rem; line-height: 1.4;">
+                <strong>Terms & Conditions:</strong> 
+                1. All fee remittances are subject to realization of Cheque / DD / Net Banking. 
+                2. Fees once paid are non-refundable and non-transferable under any circumstances as per the admissions charter. 
+                3. This receipt constitutes a valid Tax Invoice under Rule 46 of the CGST Rules, 2017. 
+                4. All legal disputes are subject exclusively to the competent courts of Kota, Rajasthan jurisdiction only.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

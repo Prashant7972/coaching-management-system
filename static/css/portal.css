@@ -1,0 +1,577 @@
+/* ==========================================================================
+   VidyaSetu Career Institute - Blue & White Enterprise Theme
+   ========================================================================== */
+
+:root {
+    /* Blue & White Primary Palette */
+    --navy-dark: #0a192f;           /* Deep Midnight Navy */
+    --navy-primary: #0f2744;        /* Rich Academic Navy */
+    --blue-deep: #1e3a8a;          /* Classic Deep Blue */
+    --blue-royal: #1d4ed8;         /* Vibrant Royal Blue */
+    --blue-primary: #2563eb;       /* Primary Action Blue */
+    --blue-sky: #3b82f6;           /* Sky Blue */
+    --blue-accent: #0284c7;        /* Ocean Accent */
+    --blue-light: #60a5fa;         /* Soft Light Blue */
+    --blue-ice: #dbeafe;           /* Ice Blue Surface */
+    --blue-subtle: #eff6ff;        /* Ultra-light Ice Tint */
+    --bg-page: #f0f6fc;            /* Fresh Crisp Blue-Gray Canvas */
+    --bg-surface: #ffffff;         /* Pure Crisp White */
+    
+    /* Clean Borders */
+    --border-blue: #bfdbfe;
+    --border-subtle: #e2e8f0;
+    --border-ice: #dbeafe;
+    
+    /* Typography */
+    --text-navy: #0f2744;
+    --text-dark: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --text-blue: #1d4ed8;
+    
+    /* Accents (Financial / Academic) */
+    --accent-emerald: #16a34a;
+    --accent-emerald-subtle: #dcfce7;
+    --accent-amber: #d97706;
+    --accent-amber-subtle: #fef3c7;
+    --accent-red: #dc2626;
+    --accent-red-subtle: #fee2e2;
+    
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --shadow-sm: 0 1px 2px 0 rgba(15, 39, 68, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(15, 39, 68, 0.08), 0 2px 4px -2px rgba(15, 39, 68, 0.04);
+    --shadow-blue: 0 8px 24px -4px rgba(29, 78, 216, 0.12);
+}
+
+body {
+    background-color: var(--bg-page);
+    color: var(--text-dark);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 0.915rem;
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   Header & Navbar (Blue & White Palette)
+   ========================================================================== */
+
+.navbar-top {
+    background: linear-gradient(135deg, #091a32 0%, #0f2744 60%, #1e3a8a 100%);
+    border-bottom: 3px solid #2563eb;
+    box-shadow: 0 2px 10px rgba(15, 39, 68, 0.15);
+    padding: 0.75rem 0 0.5rem 0;
+}
+
+.brand-emblem {
+    width: 42px;
+    height: 42px;
+    background: #ffffff;
+    color: #0f2744;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    border: 2px solid #93c5fd;
+}
+
+.brand-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+    text-transform: uppercase;
+    line-height: 1.15;
+}
+
+.brand-subtitle {
+    font-size: 0.735rem;
+    color: #bfdbfe;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.badge-center {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 0.725rem;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.35rem 0.65rem;
+    border-radius: 4px;
+}
+
+/* Navigation Links */
+.portal-nav .nav-link {
+    color: #e0f2fe;
+    font-size: 0.865rem;
+    font-weight: 500;
+    padding: 0.45rem 0.85rem;
+    border-radius: 4px;
+    transition: all 0.18s ease-in-out;
+}
+
+.portal-nav .nav-link:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.portal-nav .nav-link.active {
+    color: #ffffff;
+    background-color: #2563eb;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+}
+
+/* Action Ribbon */
+.action-ribbon {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--border-ice);
+    box-shadow: var(--shadow-sm);
+    padding: 0.65rem 0;
+}
+
+.breadcrumb-custom {
+    margin-bottom: 0;
+    font-size: 0.825rem;
+}
+
+.breadcrumb-custom a {
+    color: var(--blue-royal);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.breadcrumb-custom a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   Hero Announcement Slider / Banner Carousel
+   ========================================================================== */
+
+.hero-slider-card {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #0284c7 100%);
+    border-radius: 10px;
+    color: #ffffff;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #93c5fd;
+    box-shadow: var(--shadow-blue);
+    margin-bottom: 1.5rem;
+}
+
+.slider-slide-content {
+    padding: 2rem 2.5rem;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.slider-tag {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    font-size: 0.725rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 4px;
+    margin-bottom: 0.6rem;
+    width: fit-content;
+}
+
+.slider-headline {
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 0.45rem;
+    color: #ffffff;
+}
+
+.slider-description {
+    font-size: 0.885rem;
+    color: #e0f2fe;
+    max-width: 800px;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.carousel-indicators [data-bs-target] {
+    width: 28px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #ffffff;
+    opacity: 0.4;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.carousel-indicators .active {
+    opacity: 1;
+    width: 44px;
+    background-color: #ffffff;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 45px;
+    opacity: 0.7;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   Interactive Calculator & Sliders
+   ========================================================================== */
+
+.slider-container {
+    background-color: #ffffff;
+    border: 1px solid var(--border-ice);
+    border-radius: 8px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.custom-range-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #dbeafe;
+    outline: none;
+    transition: background 0.2s;
+}
+
+.custom-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #1d4ed8;
+    cursor: pointer;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(29, 78, 216, 0.4);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.custom-range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    background: #1e40af;
+}
+
+.custom-range-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #1d4ed8;
+    cursor: pointer;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(29, 78, 216, 0.4);
+}
+
+.slider-value-display {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--blue-royal);
+    font-family: var(--font-mono);
+}
+
+/* ==========================================================================
+   Metric Cards & Data Panels
+   ========================================================================== */
+
+.metric-box {
+    background: #ffffff;
+    border: 1px solid var(--border-ice);
+    border-radius: 8px;
+    padding: 1.2rem 1.35rem;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.metric-box:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: #93c5fd;
+}
+
+.metric-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #3b82f6;
+}
+
+.metric-box.border-primary-top::before { background: #1d4ed8; }
+.metric-box.border-success-top::before { background: #16a34a; }
+.metric-box.border-warning-top::before { background: #d97706; }
+.metric-box.border-danger-top::before  { background: #dc2626; }
+.metric-box.border-sky-top::before     { background: #0284c7; }
+
+.metric-box .metric-caption {
+    font-size: 0.725rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+}
+
+.metric-box .metric-number {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--navy-primary);
+    line-height: 1.15;
+    font-family: var(--font-mono);
+}
+
+.metric-box .metric-detail {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Panels */
+.panel-card {
+    background-color: #ffffff;
+    border: 1px solid var(--border-ice);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+}
+
+.panel-card .panel-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--border-ice);
+    padding: 0.85rem 1.35rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--navy-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.panel-card .panel-header.bg-subtle {
+    background-color: #f8fbff;
+}
+
+/* Tables */
+.table-custom {
+    margin-bottom: 0;
+    font-size: 0.875rem;
+}
+
+.table-custom th {
+    background-color: #f0f7ff;
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 0.735rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-blue);
+    padding: 0.75rem 0.95rem;
+    white-space: nowrap;
+}
+
+.table-custom td {
+    padding: 0.75rem 0.95rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.table-custom tbody tr:hover {
+    background-color: #f8fbff;
+}
+
+/* Identifiers & Amounts */
+.id-tag {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #1d4ed8;
+    background-color: #eff6ff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #bfdbfe;
+    display: inline-block;
+}
+
+.inr-amount {
+    font-family: var(--font-mono);
+    font-weight: 700;
+}
+
+/* Student & Faculty Initials Chips in Blue/White/Teal */
+.avatar-chip {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 700;
+    font-size: 0.785rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    border: 1.5px solid #bfdbfe;
+}
+
+.avatar-chip.avatar-primary {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+}
+
+.avatar-chip.avatar-navy {
+    background-color: #0f2744;
+    color: #ffffff;
+    border-color: #1e3a8a;
+}
+
+.avatar-chip.avatar-sky {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border-color: #bae6fd;
+}
+
+/* Status Pills */
+.status-pill {
+    font-size: 0.725rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+}
+
+.status-pill.pill-active,
+.status-pill.pill-paid,
+.status-pill.pill-present {
+    background-color: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+.status-pill.pill-partial,
+.status-pill.pill-late {
+    background-color: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.status-pill.pill-pending,
+.status-pill.pill-absent,
+.status-pill.pill-suspended {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.status-pill.pill-completed,
+.status-pill.pill-inactive {
+    background-color: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+/* Buttons in Blue & White */
+.btn-primary {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #1e40af;
+    border-color: #1e40af;
+}
+
+.btn-outline-primary {
+    color: #1d4ed8;
+    border-color: #1d4ed8;
+    background-color: #ffffff;
+    font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+    background-color: #1d4ed8;
+    color: #ffffff;
+}
+
+/* Forms */
+.form-label {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--navy-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.35rem;
+}
+
+.form-control, .form-select {
+    font-size: 0.885rem;
+    border-color: #bfdbfe;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+}
+
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background-color: #ffffff;
+        color: #000000;
+        font-size: 10pt;
+    }
+
+    .tax-receipt-card {
+        border: 2px solid #000000 !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 15px !important;
+        width: 100% !important;
+    }
+
+    .receipt-table th {
+        background-color: #e2e8f0 !important;
+        color: #000000 !important;
+    }
+}

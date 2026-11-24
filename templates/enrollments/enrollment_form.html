@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-portal">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'enrollment_list' %}">Enrollments</a></li>
+    <li class="breadcrumb-item active">{{ title }}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-portal">
+            <div class="card-header">{{ title }}</div>
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger mb-4">Please review the form errors below.</div>
+                    {% endif %}
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.student.id_for_label }}">Select Student *</label>
+                            {{ form.student }}
+                            {% if form.student.errors %}<div class="text-danger small mt-1">{{ form.student.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.batch.id_for_label }}">Target Batch *</label>
+                            {{ form.batch }}
+                            {% if form.batch.errors %}<div class="text-danger small mt-1">{{ form.batch.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.enrollment_date.id_for_label }}">Enrollment Date *</label>
+                            {{ form.enrollment_date }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.agreed_fee.id_for_label }}">Agreed Total Course Fee ($) *</label>
+                            {{ form.agreed_fee }}
+                            {% if form.agreed_fee.errors %}<div class="text-danger small mt-1">{{ form.agreed_fee.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.discount.id_for_label }}">Scholarship / Discount ($)</label>
+                            {{ form.discount }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.status.id_for_label }}">Enrollment Status</label>
+                            {{ form.status }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.remarks.id_for_label }}">Remarks / Concession Notes</label>
+                            {{ form.remarks }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                        <a href="{% url 'enrollment_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">Confirm Enrollment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Notice Board{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-portal">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item active">Notice Board</li>
+</ol>
+{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'notice_create' %}" class="btn btn-sm btn-primary">Post Notice</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    {% for notice in notices %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card card-portal h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="badge {% if notice.priority == 'URGENT' %}bg-danger{% elif notice.priority == 'HIGH' %}bg-warning text-dark{% else %}bg-secondary{% endif %} badge-status">
+                    {{ notice.get_priority_display }}
+                </span>
+                <span class="text-muted small">{{ notice.published_date|date:"Y-m-d" }}</span>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold text-dark mb-2">{{ notice.title }}</h6>
+                <p class="text-secondary small mb-3" style="white-space: pre-line;">{{ notice.content }}</p>
+                <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                    <span class="badge bg-light text-dark border small">Audience: {{ notice.get_target_group_display }}</span>
+                    {% if notice.is_active %}
+                    <span class="text-success small fw-medium">Active</span>
+                    {% else %}
+                    <span class="text-muted small">Archived</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer bg-white border-top p-2 text-end">
+                <div class="btn-group btn-group-sm">
+                    <a href="{% url 'notice_update' notice.pk %}" class="btn btn-outline-secondary py-0">Edit</a>
+                    <a href="{% url 'notice_delete' notice.pk %}" class="btn btn-outline-danger py-0">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="card card-portal p-5 text-center text-muted">
+            No notices published yet. Use "Post Notice" to create an announcement.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

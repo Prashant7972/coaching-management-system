@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-portal">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'course_list' %}">Courses</a></li>
+    <li class="breadcrumb-item active">{{ title }}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-portal">
+            <div class="card-header">{{ title }}</div>
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger mb-4">Please correct the form errors.</div>
+                    {% endif %}
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.course_code.id_for_label }}">Course Code *</label>
+                            {{ form.course_code }}
+                            {% if form.course_code.errors %}<div class="text-danger small mt-1">{{ form.course_code.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label" for="{{ form.name.id_for_label }}">Course Title *</label>
+                            {{ form.name }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label" for="{{ form.description.id_for_label }}">Description / Syllabus Outline</label>
+                            {{ form.description }}
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.duration_weeks.id_for_label }}">Duration (Weeks) *</label>
+                            {{ form.duration_weeks }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.fee_amount.id_for_label }}">Standard Fee ($) *</label>
+                            {{ form.fee_amount }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="{{ form.status.id_for_label }}">Status</label>
+                            {{ form.status }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                        <a href="{% url 'course_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">Save Course</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

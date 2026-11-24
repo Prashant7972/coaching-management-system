@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load coaching_tags %}
+
+{% block title %}Fee Collections & Tax Invoices{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumb breadcrumb-custom">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+    <li class="breadcrumb-item active">Fee Ledger</li>
+</ol>
+{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'payment_create' %}" class="btn btn-sm btn-primary fw-medium px-3">Record Remittance</a>
+<a href="{% url 'enrollment_list' %}" class="btn btn-sm btn-outline-secondary fw-medium px-3">Tuition Balances</a>
+{% endblock %}
+
+{% block content %}
+<div class="panel-card mb-4">
+    <div class="p-3">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <input type="text" name="q" class="form-control form-control-sm" placeholder="Search by receipt no, student name/roll no, or UPI UTR..." value="{{ query }}">
+            </div>
+            <div class="col-md-3">
+                <select name="method" class="form-select form-select-sm">
+                    <option value="">All Remittance Modes</option>
+                    <option value="UPI" {% if method == 'UPI' %}selected{% endif %}>UPI (Google Pay / PhonePe / Paytm / BHIM)</option>
+                    <option value="NEFT_RTGS" {% if method == 'NEFT_RTGS' %}selected{% endif %}>NEFT / RTGS (Net Banking)</option>
+                    <option value="IMPS" {% if method == 'IMPS' %}selected{% endif %}>IMPS Instant Remittance</option>
+                    <option value="CHEQUE_DD" {% if method == 'CHEQUE_DD' %}selected{% endif %}>Cheque / Demand Draft (DD)</option>
+                    <option value="CASH" {% if method == 'CASH' %}selected{% endif %}>Cash at Center Counter</option>
+                    <option value="CARD" {% if method == 'CARD' %}selected{% endif %}>Debit / Credit Card (POS)</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-dark fw-medium px-3">Search Collections</button>
+                {% if query or method %}
+                <a href="{% url 'payment_list' %}" class="btn btn-sm btn-outline-secondary">Reset</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="panel-card">
+    <div class="panel-header">
+        <div>
+            <span class="fw-bold">Fee Collections & GST Tax Invoice Register</span>
+            <span class="badge bg-light text-secondary border ms-2">{{ payments.count }} Transactions &bull; SAC 999293</span>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom align-middle">
+            <thead>
+                <tr>
+                    <th>Invoice / Receipt No</th>
+                    <th>Payment Date</th>
+                    <th>Roll No</th>
+                    <th>Student Name</th>
+                    <th>Batch</th>
+                    <th>Payment Mode</th>
+                    <th>Bank UTR / Cheque Ref</th>
+                    <th>Desk Clerk</th>
+                    <th>Amount Remitted</th>
+                    <th class="text-end">Official Receipt</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td><span class="id-tag">{{ payment.receipt_number }}</span></td>
+                    <td class="text-muted small">{{ payment.payment_date|date:"d M Y" }}</td>
+                    <td><span class="id-tag text-secondary">{{ payment.enrollment.student.student_id }}</span></td>
+                    <td class="fw-bold">
+                        <a href="{% url 'student_detail' payment.enrollment.student.pk %}" class="text-decoration-none text-dark">{{ payment.enrollment.student.full_name }}</a>
+                    </td>
+                    <td class="small">{{ payment.enrollment.batch.batch_code }}</td>
+                    <td><span class="badge bg-light text-dark border">{{ payment.get_payment_method_display }}</span></td>
+                    <td class="small font-monospace text-primary">{{ payment.transaction_reference|default:"-" }}</td>
+                    <td class="small text-muted">{{ payment.received_by }}</td>
+                    <td class="inr-amount text-success fs-6">{{ payment.amount|inr }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'payment_receipt' payment.pk %}" class="btn btn-sm btn-outline-secondary py-0 fw-medium">Print Bill</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="text-center py-4 text-muted">No fee remittances found matching the query.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
